@@ -33,4 +33,4 @@
 
 ![详情页示例](assets/introduce/detail_page.png)
 
-[演示视频（点击查看）](https://youtube.com/shorts/qhKwBGkVV_c?si=NaijYL5aJ9MoFuoz)
+[youtube演示视频（点击查看）](https://youtube.com/shorts/qhKwBGkVV_c?si=NaijYL5aJ9MoFuoz)
