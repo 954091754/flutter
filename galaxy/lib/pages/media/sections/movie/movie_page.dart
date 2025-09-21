@@ -188,16 +188,46 @@ class _MoviePageState extends State<MoviePage> {
                       itemCount: _banners.length,
                       onPageChanged: (idx) => setState(() => _currentPage = idx),
                       itemBuilder: (context, index) {
-                        return Image.asset(
-                          _banners[index],
-                          fit: BoxFit.cover,
-                          width: double.infinity,
+                        return InkWell(
+                          onTap: () async {
+                            // try to get the movie for this banner index from the loaded movies
+                            try {
+                              final movies = await _moviesFuture;
+                              if (movies.isNotEmpty && index < movies.length) {
+                                final movie = movies[index];
+                                Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (_) => MovieDetailPage(
+                                    title: movie.title,
+                                    image: movie.image,
+                                    rating: movie.rating,
+                                  ),
+                                ));
+                                return;
+                              }
+                            } catch (_) {
+                              // ignore and fallback
+                            }
+
+                            // fallback: create a minimal MovieDetailPage using banner image
+                            Navigator.of(context).push(MaterialPageRoute(
+                              builder: (_) => MovieDetailPage(
+                                title: '电影',
+                                image: _banners[index],
+                                rating: 0.0,
+                              ),
+                            ));
+                          },
+                          child: Image.asset(
+                            _banners[index],
+                            fit: BoxFit.cover,
+                            width: double.infinity,
+                          ),
                         );
                       },
                     ),
                   ),
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: 10),
                 // simple dots indicator
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
