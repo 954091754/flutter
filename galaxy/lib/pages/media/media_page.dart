@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'sections/movie_page.dart';
+import 'sections/movie/movie_page.dart';
 import 'sections/tv_page.dart';
 import 'sections/variety_page.dart';
 import 'sections/book_page.dart';
@@ -46,8 +46,9 @@ class _MediaPageState extends State<MediaPage> with SingleTickerProviderStateMix
                   pinned: false,
                   floating: false,
                   delegate: _SearchBarHeaderDelegate(
-                    minExtent: 56,
-                    maxExtent: 80,
+                    // reduced by ~1/3: previous (56,80) -> now approximately (40,54)
+                    minExtent: 40,
+                    maxExtent: 64,
                   ),
                 ),
 
