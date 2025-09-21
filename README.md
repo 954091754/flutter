@@ -28,15 +28,15 @@
 效果图演示：
 
 <p align="center">
-   <img src="assets/introduce/splash_page.png" alt="启动页示例" style="max-width:480px; width:100%; height:auto; border-radius:8px;" />
+   <img src="assets/introduce/splash_page.png" alt="启动页示例" style="max-width:200px; width:100%; height:auto; border-radius:8px;" />
 </p>
 
 <p align="center">
-   <img src="assets/introduce/book_videos_page.png" alt="书影音页面示例" style="max-width:480px; width:100%; height:auto; border-radius:8px;" />
+   <img src="assets/introduce/book_videos_page.png" alt="书影音页面示例" style="max-width:200px; width:100%; height:auto; border-radius:8px;" />
 </p>
 
 <p align="center">
-   <img src="assets/introduce/detail_page.png" alt="详情页示例" style="max-width:480px; width:100%; height:auto; border-radius:8px;" />
+   <img src="assets/introduce/detail_page.png" alt="详情页示例" style="max-width:200px; width:100%; height:auto; border-radius:8px;" />
 </p>
 
 [演示视频（点击查看）](assets/introduce/books_videos.mov)
