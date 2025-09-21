@@ -38,56 +38,135 @@ class _MediaPageState extends State<MediaPage> with SingleTickerProviderStateMix
       length: _titles.length,
       child: Scaffold(
         body: SafeArea(
-        child: Column(
-          children: [
-            // Search bar with horizontal padding 16
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.grey.shade200,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                padding: const EdgeInsets.symmetric(horizontal: 12),
-                child: const TextField(
-                  decoration: InputDecoration(
-                    icon: Icon(Icons.search),
-                    border: InputBorder.none,
-                    hintText: '用一部电影来形容您的2025',
+          child: NestedScrollView(
+            headerSliverBuilder: (context, innerBoxIsScrolled) {
+              return [
+                // Sliver for the search bar that fades when scrolled
+                SliverPersistentHeader(
+                  pinned: false,
+                  floating: false,
+                  delegate: _SearchBarHeaderDelegate(
+                    minExtent: 56,
+                    maxExtent: 80,
                   ),
                 ),
-              ),
-            ),
 
-            SizedBox(
-              height: 48,
-              child: TabBar(
-                isScrollable: true,
-                indicatorColor: Colors.blue,
-                indicatorWeight: 2,
-                indicatorSize: TabBarIndicatorSize.label,
-                labelColor: Colors.blue,
-                unselectedLabelColor: Colors.black87,
-                labelStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
-                unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.normal, fontSize: 14),
-                dividerColor: Colors.transparent,
-                dividerHeight: 0,
-                tabAlignment: TabAlignment.start,
-                tabs: _titles.map((t) => Tab(text: t)).toList(),
-              ),
-            ),
+                // Pinned TabBar so it will stick to the top
+                SliverPersistentHeader(
+                  pinned: true,
+                  floating: false,
+                  delegate: _TabBarHeaderDelegate(
+                    child: Container(
+                      color: Theme.of(context).scaffoldBackgroundColor,
+                      alignment: Alignment.centerLeft,
+                      child: TabBar(
+                        isScrollable: true,
+                        indicatorColor: Colors.blue,
+                        indicatorWeight: 2,
+                        indicatorSize: TabBarIndicatorSize.label,
+                        labelColor: Colors.blue,
+                        unselectedLabelColor: Colors.black87,
+                        labelStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                        unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.normal, fontSize: 14),
+                        dividerColor: Colors.transparent,
+                        dividerHeight: 0,
+                        tabAlignment: TabAlignment.start,
+                        tabs: _titles.map((t) => Tab(text: t)).toList(),
+                      ),
+                    ),
+                    minExtent: 48,
+                    maxExtent: 48,
+                  ),
+                ),
+              ];
+            },
 
-            const SizedBox(height: 12),
-
-            Expanded(
-              child: TabBarView(
-                children: _sections,
-              ),
+            body: TabBarView(
+              children: _sections.map((w) {
+                // Ensure each section is scrollable so NestedScrollView can coordinate
+                return ListView(
+                  padding: EdgeInsets.zero,
+                  children: [
+                    // keep a bit of top spacing to separate from TabBar
+                    const SizedBox(height: 12),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      child: w,
+                    ),
+                  ],
+                );
+              }).toList(),
             ),
-          ],
+          ),
         ),
       ),
+    );
+  }
+}
+
+
+class _SearchBarHeaderDelegate extends SliverPersistentHeaderDelegate {
+  final double minExtent;
+  final double maxExtent;
+
+  _SearchBarHeaderDelegate({required this.minExtent, required this.maxExtent});
+
+  @override
+  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
+    final t = (1.0 - (shrinkOffset / (maxExtent - minExtent)).clamp(0.0, 1.0));
+    return Container(
+      color: Theme.of(context).scaffoldBackgroundColor,
+      padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
+      child: Opacity(
+        opacity: t,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.grey.shade200,
+              borderRadius: BorderRadius.circular(8),
+            ),
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            alignment: Alignment.centerLeft,
+            child: const TextField(
+              decoration: InputDecoration(
+                icon: Icon(Icons.search),
+                border: InputBorder.none,
+                hintText: '用一部电影来形容您的2025',
+              ),
+            ),
+          ),
+        ),
       ),
     );
+  }
+
+  @override
+  bool shouldRebuild(covariant _SearchBarHeaderDelegate oldDelegate) {
+    return oldDelegate.maxExtent != maxExtent || oldDelegate.minExtent != minExtent;
+  }
+}
+
+class _TabBarHeaderDelegate extends SliverPersistentHeaderDelegate {
+  final Widget child;
+  final double minExtent;
+  final double maxExtent;
+
+  _TabBarHeaderDelegate({required this.child, required this.minExtent, required this.maxExtent});
+
+  @override
+  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
+    return Container(
+      color: Theme.of(context).scaffoldBackgroundColor,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+        child: child,
+      ),
+    );
+  }
+
+  @override
+  bool shouldRebuild(covariant _TabBarHeaderDelegate oldDelegate) {
+    return oldDelegate.child != child || oldDelegate.maxExtent != maxExtent || oldDelegate.minExtent != minExtent;
   }
 }
