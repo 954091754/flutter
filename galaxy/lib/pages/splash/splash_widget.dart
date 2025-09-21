@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import '../root/root_page.dart';
 
 class SplashWidget extends StatefulWidget {
   const SplashWidget({Key? key}) : super(key: key);
@@ -23,7 +24,13 @@ class _SplashWidgetState extends State<SplashWidget> {
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (_remaining <= 1) {
         timer.cancel();
-        // TODO: navigate to next screen if needed
+        // navigate to HomePage
+        if (mounted) {
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (_) => const RootPage()),
+          );
+        }
+        return;
       }
       setState(() {
         _remaining = (_remaining - 1).clamp(0, 999);
