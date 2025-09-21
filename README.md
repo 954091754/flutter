@@ -42,20 +42,12 @@ samples, guidance on mobile development, and a full API reference.
 - `assets/introduce/detail_page.png`：详情页示例截图
 - `assets/introduce/books_videos.mov`：界面交互演示视频（可用系统播放器或 QuickTime 播放）
 
-在 GitHub README 中引用图片请使用相对路径，例如：
+效果图演示：
 
-```
 ![启动页示例](assets/introduce/splash_page.png)
-```
 
-```
 ![书影音页面示例](assets/introduce/book_videos_page.png)
-```
 
-```
 ![详情页示例](assets/introduce/detail_page.png)
-```
 
-```
 [演示视频（点击查看）](assets/introduce/books_videos.mov)
-```
