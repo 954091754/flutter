@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'movie_page_item_stars.dart';
+import 'movie_detail_page.dart';
 
 class MoviePage extends StatefulWidget {
   const MoviePage({Key? key}) : super(key: key);
@@ -290,7 +291,18 @@ class _MoviePageState extends State<MoviePage> {
                 itemCount: _movies.length,
                 itemBuilder: (context, index) {
                   final item = _movies[index];
-                  return _buildMovieGridItem(item);
+                  return InkWell(
+                    onTap: () {
+                      Navigator.of(context).push(MaterialPageRoute(
+                        builder: (_) => MovieDetailPage(
+                          title: item['title'],
+                          image: item['image'],
+                          rating: item['rating'],
+                        ),
+                      ));
+                    },
+                    child: _buildMovieGridItem(item),
+                  );
                 },
               ),
             );
