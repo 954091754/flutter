@@ -193,6 +193,7 @@ class _MoviePageState extends State<MoviePage> {
                             // try to get the movie for this banner index from the loaded movies
                             try {
                               final movies = await _moviesFuture;
+                              if (!mounted) return; // avoid using context after dispose
                               if (movies.isNotEmpty && index < movies.length) {
                                 final movie = movies[index];
                                 Navigator.of(context).push(MaterialPageRoute(
@@ -209,6 +210,7 @@ class _MoviePageState extends State<MoviePage> {
                             }
 
                             // fallback: create a minimal MovieDetailPage using banner image
+                            if (!mounted) return;
                             Navigator.of(context).push(MaterialPageRoute(
                               builder: (_) => MovieDetailPage(
                                 title: '电影',
