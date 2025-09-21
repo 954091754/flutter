@@ -19,6 +19,7 @@ class _MoviePageState extends State<MoviePage> {
   late final PageController _pageController;
   Timer? _timer;
   int _currentPage = 0;
+  int _selectedSegment = 0; // 0: 影院热映, 1: 即将上映
 
   Widget _buildMenuItem(BuildContext context, IconData icon, String label, VoidCallback onTap) {
     return Expanded(
@@ -31,6 +32,30 @@ class _MoviePageState extends State<MoviePage> {
             const SizedBox(height: 6),
             Text(label, style: const TextStyle(fontSize: 12)),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSegmentButton(String label, int idx) {
+    final selected = _selectedSegment == idx;
+    return TextButton(
+      onPressed: () {
+        setState(() {
+          _selectedSegment = idx;
+        });
+      },
+      style: TextButton.styleFrom(
+        padding: EdgeInsets.zero,
+        minimumSize: const Size(0, 0),
+        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+      ),
+      child: Text(
+        label,
+        style: TextStyle(
+          fontSize: selected ? 16 : 14,
+          fontWeight: selected ? FontWeight.bold : FontWeight.normal,
+          color: selected ? Colors.black : Colors.black54,
         ),
       ),
     );
@@ -89,7 +114,6 @@ class _MoviePageState extends State<MoviePage> {
           ),
 
           const SizedBox(height: 12),
-
           // Scrolling banner (auto-play)
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 0.0),
@@ -133,7 +157,39 @@ class _MoviePageState extends State<MoviePage> {
             ),
           ),
 
-          const SizedBox(height: 12),
+          const SizedBox(height: 8),
+
+          // Section header: left small menu (as buttons) + right '全部 >'
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+            child: Row(
+              children: [
+                // Left two toggle buttons
+                Row(
+                  children: [
+                    _buildSegmentButton('影院热映', 0),
+                    const SizedBox(width: 12),
+                    _buildSegmentButton('即将上映', 1),
+                  ],
+                ),
+                const Spacer(),
+                // Right '全部 >'
+                InkWell(
+                  onTap: () {
+                    // TODO: navigate to full list
+                  },
+                  child: Row(
+                    children: const [
+                      Text('全部', style: TextStyle(fontSize: 14, color: Colors.black54)),
+                      SizedBox(width: 6),
+                      Icon(Icons.chevron_right, size: 20, color: Colors.black54),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+
           const Divider(height: 1),
 
           // Placeholder content below the menu
