@@ -1,21 +1,4 @@
-# galaxy
-
-A new Flutter project.
-
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
-
-## 项目简介（中文）
+## 项目简介（Flutter练手）
 
 `galaxy` 是一个基于 Flutter 的移动端示例应用，参考了豆瓣类的书影音界面，包含首页、列表、详情页和底部导航等常见布局。
 
