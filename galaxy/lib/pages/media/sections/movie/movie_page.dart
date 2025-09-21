@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'movie_page_item_stars.dart';
 import 'movie_detail_page.dart';
+import '../../../../models/movie.dart';
+import '../../../../services/movie_service.dart';
 
 class MoviePage extends StatefulWidget {
   const MoviePage({Key? key}) : super(key: key);
@@ -22,18 +24,8 @@ class _MoviePageState extends State<MoviePage> {
   Timer? _timer;
   int _currentPage = 0;
   int _selectedSegment = 0; // 0: 影院热映, 1: 即将上映
-  final List<Map<String, dynamic>> _movies = List.generate(
-    50,
-    (i) {
-      // mock rating in 0..10, vary a bit
-      final rating = (6.3 + (i % 4) * 0.7).clamp(0.0, 10.0);
-      return {
-        'title': '电影 ${i + 1}',
-        'image': i % 3 == 0 ? 'assets/images/banner_blsj.jpeg' : (i % 3 == 1 ? 'assets/images/banner_pfzy.jpeg' : 'assets/images/banner_qz.jpeg'),
-        'rating': double.parse(rating.toStringAsFixed(1)),
-      };
-    },
-  );
+  late final Future<List<Movie>> _moviesFuture;
+  final _movieService = MovieService();
 
   Widget _buildMenuItem(BuildContext context, IconData icon, String label, VoidCallback onTap) {
     return Expanded(
@@ -79,6 +71,8 @@ class _MoviePageState extends State<MoviePage> {
   void initState() {
     super.initState();
     _pageController = PageController(initialPage: 0);
+    // kick off loading local mock movies
+    _moviesFuture = _movieService.loadLocalMovies();
     _timer = Timer.periodic(const Duration(seconds: 3), (timer) {
       if (!mounted) return;
       _currentPage = (_currentPage + 1) % _banners.length;
@@ -288,25 +282,81 @@ class _MoviePageState extends State<MoviePage> {
                   mainAxisSpacing: crossAxisSpacing,
                   childAspectRatio: childAspectRatio,
                 ),
-                itemCount: _movies.length,
+                itemCount: 0, // replaced by FutureBuilder below
                 itemBuilder: (context, index) {
-                  final item = _movies[index];
-                  return InkWell(
-                    onTap: () {
-                      Navigator.of(context).push(MaterialPageRoute(
-                        builder: (_) => MovieDetailPage(
-                          title: item['title'],
-                          image: item['image'],
-                          rating: item['rating'],
-                        ),
-                      ));
-                    },
-                    child: _buildMovieGridItem(item),
-                  );
+                  return const SizedBox.shrink();
                 },
               ),
             );
           }),
+          // Load movies from local json and display grid when ready
+          FutureBuilder<List<Movie>>(
+            future: _moviesFuture,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 24.0),
+                  child: Center(child: CircularProgressIndicator()),
+                );
+              }
+              if (snapshot.hasError) {
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 24.0),
+                  child: Center(child: Text('加载失败: ${snapshot.error}')),
+                );
+              }
+              final movies = snapshot.data ?? <Movie>[];
+              // reuse earlier grid calculation by wrapping in LayoutBuilder
+              return LayoutBuilder(builder: (context, constraints) {
+                final screenWidth = MediaQuery.of(context).size.width;
+                const horizontalPadding = 0.0; // match other paddings
+                const crossAxisCount = 3;
+                const crossAxisSpacing = 10.0;
+
+                final availableWidth = screenWidth - horizontalPadding * 2;
+                final itemWidth = (availableWidth - (crossAxisCount - 1) * crossAxisSpacing) / crossAxisCount;
+
+                // image aspect ratio is 2:3 (width:height = 2/3), so height = width * 1.5
+                final imageHeight = itemWidth * 1.5;
+                const titleHeight = 16.0;
+                const starHeight = 12.0;
+                // vertical gaps used in _buildMovieGridItem: SizedBox(6) + SizedBox(4) + some breathing room
+                const verticalGaps = 6.0 + 4.0 + 6.0;
+                final totalHeight = imageHeight + titleHeight + starHeight + verticalGaps;
+                final childAspectRatio = itemWidth / totalHeight;
+
+                return Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: horizontalPadding),
+                  child: GridView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: crossAxisCount,
+                      crossAxisSpacing: crossAxisSpacing,
+                      mainAxisSpacing: crossAxisSpacing,
+                      childAspectRatio: childAspectRatio,
+                    ),
+                    itemCount: movies.length,
+                    itemBuilder: (context, index) {
+                      final item = movies[index];
+                      return InkWell(
+                        onTap: () {
+                          Navigator.of(context).push(MaterialPageRoute(
+                            builder: (_) => MovieDetailPage(
+                              title: item.title,
+                              image: item.image,
+                              rating: item.rating,
+                            ),
+                          ));
+                        },
+                        child: _buildMovieGridItem({'title': item.title, 'image': item.image, 'rating': item.rating}),
+                      );
+                    },
+                  ),
+                );
+              });
+            },
+          ),
         ],
       ),
     );
