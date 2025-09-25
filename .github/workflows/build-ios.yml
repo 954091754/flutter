@@ -1,0 +1,35 @@
+name: Build iOS IPA
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: stable
+
+      - name: Install CocoaPods
+        run: |
+          gem --version || true
+          sudo gem install cocoapods || true
+
+      - name: Flutter pub get
+        run: flutter pub get
+
+      - name: Build IPA (no codesign)
+        run: flutter build ipa --no-codesign --export-options-plist=ios/exportOptions.plist
+
+      - name: Upload IPA artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-ipa
+          path: build/ios/ipa/**/*.ipa
