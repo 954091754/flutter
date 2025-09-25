@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'BluetoothPage.dart';
-import 'AnimationPage.dart';
+import '../animation/AnimationListPage.dart';
 import 'DetailPage.dart';
 
 class HomePage extends StatelessWidget {
@@ -36,7 +36,7 @@ class HomePage extends StatelessWidget {
                 ));
               } else if (title == '动画研究') {
                 Navigator.of(context).push(CupertinoPageRoute(
-                  builder: (context) => const AnimationPage(),
+                  builder: (context) => const AnimationListPage(),
                 ));
               }
             },
