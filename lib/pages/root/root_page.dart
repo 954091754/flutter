@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:galaxy/pages/home/HomePage.dart';
 import '../media/media_page.dart';
 
 class RootPage extends StatefulWidget {
@@ -12,7 +13,7 @@ class _RootPageState extends State<RootPage> {
   int _currentIndex = 0;
 
   final List<Widget> _pages = [
-    const Center(child: Text('首页', style: TextStyle(fontSize: 20))),
+    const HomePage(),
     const MediaPage(),
     const Center(child: Text('小组', style: TextStyle(fontSize: 20))),
     const Center(child: Text('市集', style: TextStyle(fontSize: 20))),
