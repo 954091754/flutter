@@ -38,12 +38,6 @@ class HomePage extends StatelessWidget {
                 Navigator.of(context).push(CupertinoPageRoute(
                   builder: (context) => const AnimationPage(),
                 ));
-              } else {
-                Navigator.of(context).push(CupertinoPageRoute(
-                  builder: (context) => DetailPage(
-                    title: title.isNotEmpty ? title : 'Detail',
-                  ),
-                ));
               }
             },
           );
